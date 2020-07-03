@@ -29,12 +29,17 @@
                                         <p style="color: red">{{ err }}</p>
                                     </div>
                                 {% endfor %}
-                                {#                                <input id="input_name" class="form-control input-lg" placeholder="昵称" name="name" type="text" autofocus>#}
+                                {#<input id="input_name" class="form-control input-lg" placeholder="昵称" name="name" type="text" autofocus>#}
                             </div>
                             <div class="col-md-12" id="error_name"></div>
                             <div class="form-group">
-                                <label for="input_email"><span
-                                        class="glyphicon glyphicon-envelope"></span>&nbsp;{{ form.email.label }}</label>
+{#                                <label for="input_email"><span#}
+{#                                        class="glyphicon glyphicon-envelope"></span>&nbsp;{{ form.email.label }}</label>#}
+
+                             <label for="input_email"><span
+                                        class="glyphicon glyphicon-envelope"></span>&nbsp;邮箱地址：@@@@</label>
+
+
                                 {{ form.email }}
                                 {% for err in form.email.errors %}
                                     <div class="col-md-12">

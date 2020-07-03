@@ -84,7 +84,7 @@
         <div class="row">
             <div class="col-md-12">
                 <p>
-                    ©&nbsp;2018&nbsp;movie.mtianyan.cn&nbsp;陕ICP备16011333号-1
+                    ©&nbsp;2018&nbsp;movie.mtianyan.cn&nbsp;沪ICP备16011333号-1
                 </p>
             </div>
         </div>
@@ -102,12 +102,19 @@
     })
 
 </script>
+
+
+
 <script>
     $(document).ready(function() {
         $("img.lazy").lazyload({
             effect: "fadeIn"
         });
+
+        //jQuery触发id=do_search标签的click事件
         $("#do_search").click(function () {
+
+            //var key 给 id=key_movie这个文本定义为key的这个变量
             var key = $("#key_movie").val();
             location.href = "{{ url_for('home.search', page=1) }}?key=" + key
         });

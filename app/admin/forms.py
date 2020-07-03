@@ -1,9 +1,18 @@
 # _*_ coding: utf-8 _*_
 __author__ = 'mtianyan'
 __date__ = '2017/8/26 17:06'
+
+
+#引入Form基类
 from flask_wtf import FlaskForm
+
+
+#引入Form元素父类
 from wtforms import StringField, PasswordField, SubmitField, FileField, TextAreaField, SelectField, SelectMultipleField
+
+#引入Form验证父类
 from wtforms.validators import DataRequired, ValidationError, EqualTo
+
 from app.models import Admin, Tag, Auth, Role
 
 

@@ -1,19 +1,41 @@
 # _*_ coding: utf-8 _*_
 import datetime
+
+#装饰器
 from functools import wraps
 
 import os
+
+#利用werkzeug提供的secure_filename方法来获取安全的文件名
 from werkzeug.utils import secure_filename
 
 __author__ = 'mtianyan'
 __date__ = '2017/8/26 17:07'
 
 import uuid
+# UUID: 通用唯一标识符 ( Universally Unique Identifier ),
+# 对于所有的UUID它可以保证在空间和时间上的唯一性. 它是通过MAC地址,
+# 时间戳, 命名空间, 随机数, 伪随机数来保证生成ID的唯一性, 有着固定的大小( 128 bit ).
+# 它的唯一性和一致性特点使得可以无需注册过程就能够产生一个新的UUID. UUID可以被用作多种用途,
+# 既可以用来短时间内标记一个对象, 也可以可靠的辨别网络中的持久性对象.
+
 from werkzeug.security import generate_password_hash
+# 数据库中直接存放明文密码是很危险的,Werkzeug库中的security能够方便的实现散列密码的计算
+# security库中 generate_password_hash(password,method...)函数将原始密码作为输入,以字符串形式输出密码的散列值
+# check_password_hash(hash,password)函数检查给出的hash密码与明文密码是否相符
+
+#导入app
+#引入sqlalchemy实例化对象
 from app import db, app, rd
+
+#引入forms.py文件
 from app.home.forms import RegistForm, LoginForm, UserdetailForm, PwdForm, CommentForm
+
+#导入数据库模型
 from app.models import User, Userlog, Preview, Tag, Movie, Comment, Moviecol
+
 from . import home
+
 from flask import render_template, url_for, redirect, flash, session, request, Response
 
 
@@ -47,17 +69,17 @@ def login():
     登录
     """
     form = LoginForm()
-    if form.validate_on_submit():
-        data = form.data
-        user = User.query.filter_by(name=data["name"]).first()
+    if form.validate_on_submit():      #提交的时候进行验证,如果数据能被所有验证函数接受，则返回true，否则返回false
+        data = form.data               #获取form数据信息（包含输入的用户名（account）和密码（pwd）等信息）,这里的account和pwd是在forms.py里定义的
+        user = User.query.filter_by(name=data["name"]).first()       #查询表信息user表里的用户名信息
         if user:
-            if not user.check_pwd(data["pwd"]):
-                flash("密码错误！", "err")
+            if not user.check_pwd(data["pwd"]):                      #这里的check_pwd函数在models 下Admin模型下定义
+                flash("密码错误！", "err")                            #操作提示信息，会在前端显示
                 return redirect(url_for("home.login"))
         else:
             flash("账户不存在！", "err")
             return redirect(url_for("home.login"))
-        session["user"] = user.name
+        session["user"] = user.name                        #匹配成功，添加session
         session["user_id"] = user.id
         userlog = Userlog(
             user_id=user.id,
@@ -85,9 +107,9 @@ def register():
     """
     会员注册
     """
-    form = RegistForm()
-    if form.validate_on_submit():
-        data = form.data
+    form = RegistForm()   #实例化forms
+    if form.validate_on_submit():        #提交的时候进行验证,如果数据能被所有验证函数接受，则返回true，否则返回false
+        data = form.data                 #获取form数据信息（包含输入的用户名（account）和密码（pwd）等信息）,这里的account和pwd是在forms.py里定义的
         user = User(
             name=data["name"],
             email=data["email"],
@@ -143,8 +165,12 @@ def user():
         user.email = data["email"]
         user.phone = data["phone"]
         user.info = data["info"]
+
+        print("执行sql")
+
         db.session.add(user)
         db.session.commit()
+
         flash("修改成功!", "ok")
         return redirect(url_for("home.user"))
     return render_template("home/user.html", form=form, user=user)
@@ -190,6 +216,9 @@ def comments(page=None):
     ).order_by(
         Comment.addtime.desc()
     ).paginate(page=page, per_page=10)
+
+    print(page_data)
+
     return render_template("home/comments.html", page_data=page_data)
 
 
@@ -255,6 +284,11 @@ def moviecol(page=None):
     ).order_by(
         Moviecol.addtime.desc()
     ).paginate(page=page, per_page=2)
+
+    # Flask - SQLAlchemy 提供的 paginate() 方法。页 数是 paginate() 方法的第一个参数，也是唯一必需的参数。
+    # 可选参数 per_page 用来指定 每页显示的记录数量；如果没有指定，则默认显示 20 个记录。另一个可选参数为 error_ out，
+    # 当其设为 True 时（默认值），如果请求的页数超出了范围，则会返回 404 错误；如果 设为 False，页数超出范围时会返回一个空列表。
+
     return render_template("home/moviecol.html", page_data=page_data)
 
 
@@ -267,7 +301,13 @@ def index(page=None):
     tags = Tag.query.all()
     page_data = Movie.query
     # 标签
+    # 当get请求时，需要使用request.args来获取数据
+    # 当post请求时，需要使用request.form来获取数据
+
     tid = request.args.get("tid", 0)
+
+    print(tid)
+
     if int(tid) != 0:
         page_data = page_data.filter_by(tag_id=int(tid))
     # 星级
@@ -351,6 +391,9 @@ def search(page=None):
     ).order_by(
         Movie.addtime.desc()
     ).paginate(page=page, per_page=10)
+
+    print(page_data)
+
     page_data.key = key
     return render_template("home/search.html", movie_count=movie_count, key=key, page_data=page_data)
 

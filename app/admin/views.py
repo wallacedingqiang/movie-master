@@ -295,7 +295,9 @@ def movie_list(page=None):
         Tag.id == Movie.tag_id
     ).order_by(
         Movie.addtime.desc()
-    ).paginate(page=page, per_page=1)
+    ).paginate(page=page, per_page=10)
+
+    print(page_data)
     return render_template("admin/movie_list.html", page_data=page_data)
 
 

@@ -23,6 +23,8 @@ class User(db.Model):
     comments = db.relationship('Comment', backref='user')  # 评论外键关系关联
     moviecols = db.relationship('Moviecol', backref='user')  # 收藏外键关系关联
 
+    # 由此可见，__repr__()方法是类的实例化对象用来做“自我介绍”的方法，默认情况下，它会返回当前对象的“类名 +
+    # objectat + 内存地址”，而如果对该方法进行重写，可以为其制作自定义的自我描述信息。
     def __repr__(self):
         return '<User %r>' % self.name
 

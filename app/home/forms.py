@@ -9,11 +9,16 @@ from app.models import User
 
 class RegistForm(FlaskForm):
     name = StringField(
+        # 标签
         label="昵称",
+        # 验证器
         validators=[
             DataRequired("昵称不能为空！")
         ],
         description="昵称",
+
+        #wtforms字段的构造函数有一个render_kw参数，可以控制渲染内容的属性:
+        # 附加选项(主要是前端样式),会自动在前端判别
         render_kw={
             "class": "form-control input-lg",
             "placeholder": "请输入昵称！",
@@ -74,6 +79,7 @@ class RegistForm(FlaskForm):
         }
     )
 
+    # 账号认证，自定义验证器，判断输入的值是否唯一
     def validate_name(self, field):
         name = field.data
         user = User.query.filter_by(name=name).count()
