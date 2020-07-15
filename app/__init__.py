@@ -6,6 +6,8 @@ __date__ = '2017/8/26 17:05'
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_redis import FlaskRedis
+
+
 app = Flask(__name__)
 # 用于连接数据的数据库。
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:d123456@106.15.237.25:3306/movie"
@@ -24,8 +26,10 @@ rd = FlaskRedis(app)
 # 不要在生成db之前导入注册蓝图。
 from app.home import home as home_blueprint
 from app.admin import admin as admin_blueprint
+from app.test import test as test_blueprint
 app.register_blueprint(home_blueprint)
 app.register_blueprint(admin_blueprint, url_prefix="/admin")
+app.register_blueprint(test_blueprint,url_prefix="/test")
 
 
 @app.errorhandler(404)

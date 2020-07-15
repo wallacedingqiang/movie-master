@@ -184,6 +184,38 @@ def tag_add():
     return render_template("admin/tag_add.html", form=form)
 
 
+@admin.route("/tag/addtest/", methods=["GET", "POST"])
+@admin_login_req
+# @admin_auth
+def tag_add_test():
+    """
+    标签添加
+    """
+    form = TagForm()
+    if form.validate_on_submit():
+        data = form.data
+        tag = Tag.query.filter_by(name=data["name"]).count()
+        # 说明已经有这个标签了
+        if tag == 1:
+            flash("标签已存在", "err")
+            return redirect(url_for("admin.tag_add_test"))
+        tag = Tag(
+            name=data["name"]
+        )
+        db.session.add(tag)
+        db.session.commit()
+        oplog = Oplog(
+            admin_id=session["admin_id"],
+            ip=request.remote_addr,
+            reason="添加标签%s" % data["name"]
+        )
+        db.session.add(oplog)
+        db.session.commit()
+        flash("标签添加成功", "ok")
+        redirect(url_for("admin.tag_add"))
+    return render_template("admin/tag_add_test.html", form=form)
+
+
 @admin.route("/tag/edit/<int:id>", methods=["GET", "POST"])
 @admin_login_req
 # @admin_auth
@@ -288,6 +320,7 @@ def movie_list(page=None):
     """
     电影列表页面
     """
+    # 如果没有page则显示第一页
     if page is None:
         page = 1
     # 进行关联Tag的查询,单表查询使用filter_by 多表查询使用filter进行关联字段的声明
@@ -296,6 +329,36 @@ def movie_list(page=None):
     ).order_by(
         Movie.addtime.desc()
     ).paginate(page=page, per_page=10)
+    # paginate方法返回一个sqlalchemy.Pagination类型对象
+
+    '''
+    page_data是一个FlaskSQLAlchemy中的Pagination类型对象一个Query对象调用paginate方法就获得了Pagination对象。
+    paginate方法传入了两个参数，一个是当前页，另一个是每一页最多显示多少数据。paginate的返回值为代表当前页的Pagination对象。
+    一个Paginationi对象的常用属性有：
+    items
+    当前页面中的所有记录(比如当前页上有5条记录，items就是以列表形式组织这5个记录)
+    query
+    当前页的query对象(通过query对象调用paginate方法获得的Pagination对象)
+    page
+    当前页码(比如当前页是第5页，返回5)
+    prev_num
+    上一页页码
+    next_num
+    下一页页码
+    has_next
+    是否有下一页
+    True / False
+    has_prev
+    是否有上一页
+    True / False
+    pages
+    查询得到的总页数
+    per_page
+    每页显示的记录条数
+    total
+    总的记录条数
+    '''
+
 
     print(page_data)
     return render_template("admin/movie_list.html", page_data=page_data)
