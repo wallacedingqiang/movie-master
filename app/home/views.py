@@ -285,9 +285,11 @@ def moviecol(page=None):
         Moviecol.addtime.desc()
     ).paginate(page=page, per_page=2)
 
-    # Flask - SQLAlchemy 提供的 paginate() 方法。页 数是 paginate() 方法的第一个参数，也是唯一必需的参数。
-    # 可选参数 per_page 用来指定 每页显示的记录数量；如果没有指定，则默认显示 20 个记录。另一个可选参数为 error_ out，
-    # 当其设为 True 时（默认值），如果请求的页数超出了范围，则会返回 404 错误；如果 设为 False，页数超出范围时会返回一个空列表。
+    """
+    Flask - SQLAlchemy 提供的 paginate() 方法。页 数是 paginate() 方法的第一个参数，也是唯一必需的参数。
+    可选参数 per_page 用来指定 每页显示的记录数量；如果没有指定，则默认显示 20 个记录。另一个可选参数为 error_ out，
+    当其设为 True 时（默认值），如果请求的页数超出了范围，则会返回 404 错误；如果 设为 False，页数超出范围时会返回一个空列表。
+    """
 
     return render_template("home/moviecol.html", page_data=page_data)
 

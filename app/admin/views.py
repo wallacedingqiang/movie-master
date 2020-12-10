@@ -151,6 +151,8 @@ def index():
     g.logo = "mtianyan.jpg"
     return render_template("admin/index.html")
 
+#后台首页系统管理
+
 
 @admin.route("/tag/add/", methods=["GET", "POST"])
 @admin_login_req
@@ -225,6 +227,7 @@ def tag_edit(id=None):
     """
     form = TagForm()
     form.submit.label.text = "修改"
+    print(id)
     tag = Tag.query.get_or_404(id)
     if form.validate_on_submit():
         data = form.data
@@ -265,6 +268,8 @@ def tag_del(id=None):
     """
     # filter_by在查不到或多个的时候并不会报错，get会报错。
     tag = Tag.query.filter_by(id=id).first_or_404()
+    print(tag.name)
+    print(tag.id)
     db.session.delete(tag)
     db.session.commit()
     flash("标签<<{0}>>删除成功".format(tag.name), "ok")
